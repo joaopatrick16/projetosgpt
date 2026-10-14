@@ -1,0 +1,33 @@
+import {amountToCents, expensesForMonth, totals, shiftMonth, validEntries} from './finance.js';
+const $ = id => document.getElementById(id);
+const money = cents => new Intl.NumberFormat('pt-BR', {style:'currency', currency:'BRL'}).format(cents / 100);
+const today = new Date();
+const localDate = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+const key = 'saldo.expenses.v1';
+let entries = [], storageHealthy = true;
+try { const raw = localStorage.getItem(key); if (raw) {const parsed = JSON.parse(raw); if (!validEntries(parsed)) throw Error(); entries = parsed;} } catch { storageHealthy = false; $('message').textContent = 'Não foi possível ler os dados salvos. Exporte ou preserve seus dados antes de restaurar um backup. Novos lançamentos estão bloqueados para evitar sobrescrever dados.'; }
+$('month').value = localDate.slice(0,7); $('date').value = localDate;
+function save(next) { if (!storageHealthy) { $('message').textContent = 'Armazenamento indisponível. Restaure um backup válido para recuperar o acesso.'; return false; } try { localStorage.setItem(key, JSON.stringify(next)); entries = next; return true; } catch { $('message').textContent = 'Não foi possível salvar. Verifique o espaço e as permissões do navegador.'; return false; } }
+function text(tag, value, className) {const el = document.createElement(tag); el.textContent = value; if(className) el.className = className; return el;}
+function render() {
+  const month = $('month').value; if (!/^\d{4}-\d{2}$/.test(month)) return;
+  const current = totals(entries, month), previous = totals(entries, shiftMonth(month,-1));
+  for (const field of ['total','fixed','variable']) $(field).textContent = money(current[field]);
+  $('delta').textContent = previous.total ? `${current.total > previous.total ? '↑' : current.total < previous.total ? '↓' : '↔'} ${Math.abs((current.total-previous.total)/previous.total*100).toFixed(1).replace('.',',')}% em relação ao mês anterior` : 'Mês anterior sem gastos registrados';
+  const months = Array.from({length:6}, (_,i) => shiftMonth(month,i-5));
+  const maximum = Math.max(1,...months.map(m => totals(entries,m).total)); $('chart').replaceChildren();
+  for(const m of months) {const t = totals(entries,m); const column = text('div','', 'bar-column'); column.append(text('div',money(t.total),'bar-value')); const bar = text('div','','bar'); bar.style.height = `${t.total/maximum*130}px`; bar.setAttribute('aria-label',`${m}: fixos ${money(t.fixed)}, variáveis ${money(t.variable)}`); for (const type of ['fixed','variable']) {const part = text('div','',`bar-${type}`); part.style.height = `${t.total ? t[type]/t.total*100 : 0}%`; bar.append(part);} column.append(bar,text('div',`${m.slice(5)}/${m.slice(2,4)}`,'bar-label')); $('chart').append(column); }
+  const selected = expensesForMonth(entries,month), categories = new Map(); selected.forEach(e => categories.set(e.category,(categories.get(e.category)||0)+e.cents)); $('categories').replaceChildren();
+  for(const [category, cents] of [...categories].sort((a,b)=>b[1]-a[1])) {const line = text('div','','category'); line.append(text('span',category),text('strong',money(cents))); $('categories').append(line);}
+  if (!selected.length) $('categories').append(text('p','Suas categorias aparecerão aqui.','empty'));
+  $('list').replaceChildren(); const filtered = selected.filter(e => $('filter').value === 'all' || e.type === $('filter').value).sort((a,b)=>b.date.localeCompare(a.date));
+  for (const e of filtered) { const line = text('div','','expense'), details = text('div','','expense-details'); const shownDate = e.recurring && e.date.slice(0,7) !== month ? `Recorrente desde ${e.date.split('-').reverse().join('/')}` : e.date.split('-').reverse().join('/'); details.append(text('strong',e.description),text('small',`${e.category} · ${e.type === 'fixed' ? 'Fixo' : 'Variável'} · ${shownDate}${e.recurring ? ' · Mensal' : ''}`)); const remove = text('button','Excluir','delete'); remove.setAttribute('aria-label',`Excluir ${e.description}`); remove.onclick = () => {if(confirm(e.recurring ? 'Excluir este gasto e todas as suas repetições mensais?' : 'Excluir este gasto?') && save(entries.filter(item => item.id !== e.id))) render();}; line.append(details,text('span',money(e.cents),'expense-amount'),remove); $('list').append(line); }
+  if (!filtered.length) $('list').append(text('p','Nenhum gasto por aqui. Adicione seu primeiro lançamento para acompanhar este mês.','empty'));
+}
+$('type').onchange = () => { $('recurring').disabled = $('type').value !== 'fixed'; if($('recurring').disabled) $('recurring').checked = false; };
+$('month').onchange = render; $('filter').onchange = render;
+$('expense-form').onsubmit = event => {event.preventDefault(); const cents = amountToCents($('amount').value); if(!cents) { $('message').textContent = 'Informe um valor positivo, como 125,90, sem separador de milhares.'; return; } const expense = {id:crypto.randomUUID(), description:$('description').value.trim(), cents, date:$('date').value, type:$('type').value, category:$('category').value, recurring:$('recurring').checked}; if(!validEntries([expense])) {$('message').textContent='Confira a descrição e a data do gasto.'; return;} if(save([...entries,expense])) {$('month').value = expense.date.slice(0,7); $('description').value=''; $('amount').value=''; $('message').textContent='Gasto salvo no aparelho.'; render(); $('description').focus();}};
+$('backup').onclick = () => {if(!storageHealthy) {$('message').textContent='Os dados locais não puderam ser lidos. A exportação foi bloqueada para não gerar um backup incompleto.'; return;} const url=URL.createObjectURL(new Blob([JSON.stringify({version:1,expenses:entries},null,2)],{type:'application/json'})); const link=document.createElement('a'); link.href=url; link.download=`saldo-backup-${localDate}.json`; link.click(); setTimeout(()=>URL.revokeObjectURL(url),1000);};
+$('restore').onchange = async event => {const file=event.target.files[0]; if(!file) return; try {if(file.size>20*1024*1024) throw Error(); const data=JSON.parse(await file.text()); if(data.version!==1 || !validEntries(data.expenses)) throw Error(); if(confirm(`Substituir os dados deste aparelho pelos ${data.expenses.length} gastos do backup? Exporte os dados atuais antes de continuar.`)) {const oldHealth=storageHealthy; storageHealthy=true; if(save(data.expenses)) {$('message').textContent='Backup restaurado.'; render();} else storageHealthy=oldHealth;}} catch {$('message').textContent='Backup inválido. Selecione um arquivo JSON exportado pelo Saldo.';} event.target.value='';};
+render();
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});

@@ -1,0 +1,8 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {amountToCents, totals, shiftMonth, validEntries} from './finance.js';
+const base={id:'one',description:'Aluguel',cents:150000,date:'2026-01-31',type:'fixed',category:'Moradia',recurring:true};
+test('valores monetários têm precisão de centavos e rejeitam entradas inválidas',()=>{assert.equal(amountToCents('125,90'),12590);assert.equal(amountToCents('0.29'),29);for(const value of ['-10','0','1.000,00','NaN','1,999'])assert.equal(amountToCents(value),null);});
+test('recorrência inicia no mês correto, sem duplicar e atravessa fevereiro',()=>{const data=[base,{...base,id:'two',cents:3000,type:'variable',recurring:false,date:'2026-02-01'}];assert.deepEqual(totals(data,'2025-12'),{fixed:0,variable:0,total:0});assert.equal(totals(data,'2026-01').total,150000);assert.deepEqual(totals(data,'2026-02'),{fixed:150000,variable:3000,total:153000});assert.equal(totals(data,'2026-03').total,150000);});
+test('comparativo atravessa a mudança de ano',()=>{assert.equal(shiftMonth('2026-01',-1),'2025-12');});
+test('backup rejeita datas inexistentes, ids repetidos e recorrência variável',()=>{assert.ok(validEntries([base]));assert.equal(validEntries([base,base]),false);assert.equal(validEntries([{...base,date:'2026-02-30'}]),false);assert.equal(validEntries([{...base,type:'variable'}]),false);});
