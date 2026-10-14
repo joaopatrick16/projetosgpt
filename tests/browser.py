@@ -15,6 +15,7 @@ CAT='44444444-4444-4444-8444-444444444444'
 with sync_playwright() as p:
     browser=p.chromium.launch(executable_path=os.environ.get('CHROMIUM_PATH','/usr/bin/chromium'),args=['--no-sandbox'])
     context=browser.new_context(viewport={'width':390,'height':844},is_mobile=True,service_workers='block')
+    context.route('**/config.js',lambda r:r.fulfill(content_type='application/javascript',body="export const cloudConfig={url:'',publishableKey:''};"))
     page=context.new_page(); errors=[]
     page.on('pageerror',lambda error: errors.append(str(error)))
     page.goto(BASE)

@@ -8,16 +8,23 @@ if(configured && (!/^https:\/\/[a-z0-9.-]+$/i.test(base) || cloudConfig.publisha
 if(configured && cloudConfig.publishableKey.split('.').length===3){try{const encoded=cloudConfig.publishableKey.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');const payload=JSON.parse(atob(encoded));if(payload.role!=='anon')throw Error();}catch{throw Error('Use apenas a chave publicável ou anon. Chaves administrativas são proibidas no aplicativo.');}}
 function keep(value) { session=value; try {if(value)sessionStorage.setItem(storageKey,JSON.stringify(value));else sessionStorage.removeItem(storageKey);} catch { /* session stays in memory */ } }
 function keepTokens(value) { keep({...value,expires_at:Math.floor(Date.now()/1000)+(value.expires_in||3600)}); }
-function friendly(error,status) {
+export function friendly(error,status) {
  const code=error.code||error.error_code;
  if(code==='invalid_credentials')return 'E-mail ou senha incorretos.';
  if(code==='email_not_confirmed')return 'Confirme seu e-mail antes de entrar.';
+ if(code==='over_email_send_rate_limit')return 'O limite de e-mails de confirmação foi atingido. Aguarde antes de tentar novamente. Se persistir, o responsável precisa configurar o SMTP no Supabase.';
+ if(code==='email_address_not_authorized')return 'O serviço de e-mail ainda não está autorizado a enviar para esse endereço. O responsável precisa configurar o SMTP no Supabase.';
+ if(code==='email_address_invalid')return 'Confira o endereço de e-mail informado.';
+ if(code==='user_already_exists' || code==='email_exists')return 'Já existe uma conta com esse e-mail. Use Entrar ou Esqueci minha senha.';
+ if(code==='signup_disabled')return 'O cadastro de novas contas está desativado no Supabase.';
+ if(/database error saving new user/i.test(error.msg||error.message||''))return 'O banco não conseguiu criar seu perfil. O responsável precisa verificar o registro de autenticação e a configuração das tabelas no Supabase.';
  if(status===429)return 'Muitas tentativas. Aguarde um pouco antes de tentar novamente.';
  if(code==='23505')return 'Esse registro já existe. Use outro nome.';
  if(status===401)return 'Sua sessão expirou. Entre novamente.';
  if(status===403 || code==='42501')return 'Você não tem permissão para essa ação.';
  if(code==='weak_password')return 'Escolha uma senha mais forte, com pelo menos 8 caracteres.';
- return 'Não foi possível concluir a ação. Verifique a conexão e a configuração do serviço.';
+ const reference=typeof code==='string'&&/^[a-z0-9_]{1,60}$/i.test(code)?code:`HTTP ${status}`;
+ return `Não foi possível concluir a ação (${reference}). Informe essa referência ao responsável para verificar o serviço.`;
 }
 async function request(path,{method='GET',body,authenticated=true,headers={},blob=false}={}) {
  if(!configured)throw Error('As contas ainda precisam ser conectadas ao banco de dados.');
