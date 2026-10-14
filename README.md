@@ -18,10 +18,12 @@ O servidor de desenvolvimento usa a porta 8000. Para instalar no iPhone, publiqu
 - Lançamentos em reais, com data, categoria e tipo fixo/variável.
 - Recorrência mensal opcional para gastos fixos, desde o mês inicial, sem data final. Excluir uma série remove todas as ocorrências, inclusive anteriores; para gastos com valor diferente em cada mês, use lançamentos individuais.
 - Resumo mensal, comparação com mês anterior, gráfico de seis meses e totais por categoria.
-- Backup JSON e restauração com validação e confirmação antes de substituir dados.
+- Tema escuro com detalhes em azul e verde-água.
+- Exportação direta em PDF do mês selecionado, com resumo, comparação de seis meses, categorias e detalhes paginados. O relatório inclui todos os gastos do mês, independentemente do filtro da lista.
+- Backup JSON separado e restauração com validação e confirmação antes de substituir dados. O PDF é para leitura; a restauração usa JSON.
 
 Os valores são armazenados em centavos. Os gastos recorrentes são compromissos projetados, sem confirmação de pagamento. Os dados ficam no localStorage do navegador; não há sincronização entre aparelhos. Faça backups antes de limpar o navegador ou mudar de dispositivo. Não existe edição nesta versão: exclua e lance novamente. O comparativo considera apenas despesas registradas, sem receitas ou saldo bancário.
 
 ## Validação
 
-`npm test` cobre valores, recorrência, mudança de ano e validação de backups. A experiência de instalação e armazenamento deve ser conferida em um iPhone real antes de distribuição pública.
+`npm test` cobre valores, recorrência, mudança de ano e validação de backups, estrutura do PDF e paginação. A experiência de instalação e armazenamento deve ser conferida em um iPhone real antes de distribuição pública.
