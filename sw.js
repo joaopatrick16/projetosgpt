@@ -1,4 +1,4 @@
-const CACHE='saldo-v3';
+const CACHE='saldo-v4';
 const FILES=['./','./index.html','./style.css','./app.js','./finance.js','./report.js','./cloud.js','./config.js','./manifest.webmanifest','./icon.svg','./icon.png'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(FILES)));});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key.startsWith('saldo-')&&key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim()));});
