@@ -1,0 +1,3 @@
+[functions.send-email]
+# A função valida o JWT em /auth/v1/user e confere a função administrativa no banco.
+verify_jwt = false

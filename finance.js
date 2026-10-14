@@ -9,7 +9,7 @@ export function expensesForMonth(entries, month) {
   return entries.filter(e => monthOf(e.date) === month || (e.recurring && monthOf(e.date) < month));
 }
 export function totals(entries, month) {
-  const selected = expensesForMonth(entries, month);
+  const selected = expensesForMonth(entries, month).filter(e => e.direction !== 'income');
   const fixed = selected.filter(e => e.type === 'fixed').reduce((s, e) => s + e.cents, 0);
   const variable = selected.filter(e => e.type === 'variable').reduce((s, e) => s + e.cents, 0);
   return {fixed, variable, total: fixed + variable};
@@ -20,5 +20,11 @@ export function shiftMonth(month, delta) {
   return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}`;
 }
 export function validEntries(entries) {
-  return Array.isArray(entries) && entries.length <= 100000 && new Set(entries.map(e => e?.id)).size === entries.length && entries.every(e => e && typeof e.id === 'string' && e.id.length > 0 && typeof e.description === 'string' && e.description.trim().length > 0 && e.description.length <= 80 && Number.isSafeInteger(e.cents) && e.cents > 0 && e.cents <= 1e12 && typeof e.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(e.date) && !isNaN(Date.parse(e.date)) && new Date(e.date).toISOString().slice(0,10) === e.date && ['fixed','variable'].includes(e.type) && typeof e.category === 'string' && e.category.length > 0 && e.category.length <= 80 && typeof e.recurring === 'boolean' && (!e.recurring || e.type === 'fixed'));
+  return Array.isArray(entries) && entries.length <= 100000 && new Set(entries.map(e => e?.id)).size === entries.length && entries.every(e => e && typeof e.id === 'string' && e.id.length > 0 && typeof e.description === 'string' && e.description.trim().length > 0 && e.description.length <= 80 && Number.isSafeInteger(e.cents) && e.cents > 0 && e.cents <= 1e12 && typeof e.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(e.date) && !isNaN(Date.parse(e.date)) && new Date(e.date).toISOString().slice(0,10) === e.date && ['fixed','variable'].includes(e.type) && typeof e.category === 'string' && e.category.length > 0 && e.category.length <= 80 && (e.direction === undefined || ['expense','income'].includes(e.direction)) && (e.payment_method === undefined || ['credit','debit','cash','transfer'].includes(e.payment_method)) && typeof e.recurring === 'boolean' && (!e.recurring || e.type === 'fixed'));
+}
+
+export function cashflow(entries, month) {
+  const expense = totals(entries,month);
+  const income = expensesForMonth(entries,month).filter(e=>e.direction==='income').reduce((sum,e)=>sum+e.cents,0);
+  return {...expense, income, balance: income-expense.total};
 }
