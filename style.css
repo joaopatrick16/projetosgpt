@@ -154,3 +154,5 @@ body{background:#001d39}.app-shell{display:grid;grid-template-columns:238px minm
 .auth-card h1{text-align:center}.auth-actions{justify-content:center;flex-wrap:nowrap}.auth-actions button{padding:12px 14px;font-size:13px}.auth-local-note{text-align:center;font-size:11px;line-height:1.6;margin:18px auto 0;max-width:320px}@media(max-width:360px){.auth-actions{gap:8px}.auth-actions button{padding:11px 10px;font-size:12px}}
 
 .auth-card h1{width:100%;margin-left:auto;margin-right:auto;text-align:center}.auth-card .auth-actions{width:100%;display:flex;justify-content:center;align-items:center;margin-left:auto;margin-right:auto;gap:10px}.auth-card .auth-local-note{font-size:10px;text-align:center;margin:16px auto 0;max-width:300px}
+
+.auth-card .auth-actions{flex-direction:column;gap:10px;margin-top:16px}.auth-card #forgot-password{width:190px;max-width:100%;min-height:40px;padding:9px 16px;font-size:12px}.auth-card #toggle-signup{width:140px;max-width:100%;min-height:36px;padding:8px 12px;font-size:11px}.auth-card .auth-local-note{font-size:9px;line-height:1.6;margin-top:28px;max-width:280px}
