@@ -28,7 +28,7 @@ document.addEventListener('click',event=>{
 },true);
 document.addEventListener('click',event=>{
   const button=event.target.closest?.('button');
-  const panels={'open-profile':'profile-panel','admin-toggle':'admin-panel','toggle-signup':'signup-name-label'};
+  const panels={'toggle-signup':'signup-name-label'};
   if(button && panels[button.id])animateFeedback(document.getElementById(panels[button.id]),'reveal');
 });
 document.addEventListener('change',event=>{

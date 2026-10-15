@@ -1,6 +1,6 @@
 # Saldo
 
-App financeiro leve em português, com tema escuro em azul-marinho, azul e ciano, compatível com Safari no iPhone. HTML/CSS/JavaScript sem framework, fontes remotas, dependências de execução ou build.
+App financeiro leve em português, com tema escuro em azul-marinho, azul e ciano, compatível com Safari no iPhone. HTML/CSS/JavaScript sem framework, fontes remotas, dependências de execução ou build. A fonte Inter é servida localmente em WOFF2 (48 KB), com licença em fonts/OFL.txt.
 
 ## Executar
 
@@ -14,6 +14,10 @@ npm test
 Porta 8000. Se estiver ocupada, use `python3 -m http.server 8010 --bind 127.0.0.1`. Para instalar no iPhone, publique os arquivos estáticos em HTTPS e use Safari → Compartilhar → Adicionar à Tela de Início.
 
 ## Visual e interações
+
+Layout com menu lateral recolhível no computador e gaveta no celular, inspirado em painéis de relatórios. Abas Dashboard, Relatórios, Usuários (super admin), Configurações, Meu perfil e Exportar PDF. O perfil está disponível para contas autenticadas. A navegação mantém mês e escopo selecionados e preserva o foco pelo teclado.
+
+O dashboard combina cartões 2×2, barras mensais lado a lado e distribuição por categoria em pizza ou rosca. A preferência de visualização fica salva no aparelho. Relatórios traz comparação de seis meses, barras de participação por categoria/pagamento e lançamentos; a exportação possui um resumo antes do download. Os gráficos usam apenas saídas, incluindo compromissos recorrentes.
 
 Paleta baseada em #001D39, #0A4174, #49769F, #4E8EA2, #6EA2B3, #7BBDE8 e #BDD8E9, com degradês e botões arredondados. Efeitos curtos de onda, destaque, abertura de painel e feedback de erro ocorrem somente nas interações, via Web Animations API. Não há animações em loop. A preferência `prefers-reduced-motion` desativa os efeitos e transições. A cor personalizada pelo super admin continua disponível; o antigo azul padrão recebe a nova tonalidade.
 
@@ -38,6 +42,7 @@ A lista renderiza 50 lançamentos por vez, com botão para carregar mais. O carr
 ## Validação
 
 - `npm test`: cálculos, backups, PDF e função de envio (provedor simulado).
+- `tests/navigation.py`: menu expandido/compacto, persistência, gaveta mobile, foco e Esc, abas, pizza/rosca, PDF e larguras de 320 a 1440 pixels.
 - `tests/browser.py`: interface mobile/local e fluxos cloud contra fixtures (não comprova uma integração Supabase publicada).
 - `tests/security.mjs`: schema e políticas executados em PostgreSQL embarcado/PGlite com dois usuários e um admin. Não faz parte do app nem exige dependência em produção.
 
@@ -48,6 +53,7 @@ npm install --prefix /tmp/saldo-validation --cache /tmp/saldo-npm-cache --no-aud
 node tests/security.mjs /tmp/saldo-validation/node_modules/@electric-sql/pglite/dist/index.js
 # Playwright instalado e Chromium disponível:
 SALDO_TEST_URL=http://127.0.0.1:8000 python3 tests/browser.py
+SALDO_TEST_URL=http://127.0.0.1:8000 python3 tests/navigation.py
 ```
 
 Os testes SQL usam schemas auth/storage de suporte para avaliar RLS; não substituem a ativação e testes no Supabase real. Login, fotos, confirmação de e-mail e entrega precisam ser validados no projeto configurado. O Safari/iPhone real ainda exige validação.

@@ -1,0 +1,5 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {breakdown,categorySegments} from './dashboard.js';
+test('distribuição considera apenas saídas, com recorrência e ordem por valor',()=>{const entries=[{category:'Moradia',cents:10000,date:'2026-01-01',recurring:true,direction:'expense'},{category:'Alimentação',cents:5000,date:'2026-02-01',recurring:false},{category:'Salário',cents:30000,date:'2026-02-01',direction:'income'}];assert.deepEqual(breakdown(entries,'2026-02'),[['Moradia',10000],['Alimentação',5000]]);assert.deepEqual(breakdown(entries,'2025-12'),[]);});
+test('pizza e rosca usam os mesmos segmentos, proporcionais e sem fatias fictícias',()=>{const segments=categorySegments([['A',300],['B',100]]);assert.equal(segments[0].percentage,75);assert.equal(segments[0].start,0);assert.equal(segments[0].end,75);assert.equal(segments[1].start,75);assert.equal(segments[1].end,100);assert.deepEqual(categorySegments([]),[]);assert.equal(categorySegments([['A',100]])[0].end,100);});
