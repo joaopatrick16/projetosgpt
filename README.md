@@ -1,6 +1,6 @@
 # Saldo
 
-App financeiro leve em português, com tema escuro, compatível com Safari no iPhone. HTML/CSS/JavaScript sem framework, fontes remotas, dependências de execução ou build.
+App financeiro leve em português, com tema escuro em azul-marinho, azul e ciano, compatível com Safari no iPhone. HTML/CSS/JavaScript sem framework, fontes remotas, dependências de execução ou build.
 
 ## Executar
 
@@ -12,6 +12,10 @@ npm test
 ```
 
 Porta 8000. Se estiver ocupada, use `python3 -m http.server 8010 --bind 127.0.0.1`. Para instalar no iPhone, publique os arquivos estáticos em HTTPS e use Safari → Compartilhar → Adicionar à Tela de Início.
+
+## Visual e interações
+
+Paleta baseada em #001D39, #0A4174, #49769F, #4E8EA2, #6EA2B3, #7BBDE8 e #BDD8E9, com degradês e botões arredondados. Efeitos curtos de onda, destaque, abertura de painel e feedback de erro ocorrem somente nas interações, via Web Animations API. Não há animações em loop. A preferência `prefers-reduced-motion` desativa os efeitos e transições. A cor personalizada pelo super admin continua disponível; o antigo azul padrão recebe a nova tonalidade.
 
 ## Modos
 
