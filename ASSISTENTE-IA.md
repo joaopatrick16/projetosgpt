@@ -2,7 +2,7 @@
 
 Esta versão substitui a integração com API de IA. Não precisa criar conta na OpenAI, adicionar créditos, chave, SQL ou configurar variáveis no Netlify. A frase é analisada neste aparelho; não é enviada a um serviço de IA. Não há cota de 20 interpretações: o processamento local não usa API paga. Salvar na nuvem continua exigindo conexão e login, como os lançamentos manuais.
 
-No formulário de lançamento, abra **Assistente Serimora · lançar por texto**, escreva uma frase e clique em **Preparar lançamento**. Revise os campos editáveis e use **Confirmar e salvar na minha conta**. Cancelar ou fechar descarta o rascunho. O exemplo é identificado como demonstração e também só grava após confirmar.
+No formulário de lançamento, abra **Assistente Serimora**, escreva uma frase e clique em **Preparar lançamento**. Revise os campos editáveis e use **Confirmar e salvar na minha conta**. Cancelar ou fechar descarta o rascunho. O exemplo é identificado como demonstração e também só grava após confirmar.
 
 Exemplos:
 
