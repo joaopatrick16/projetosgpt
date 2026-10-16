@@ -33,7 +33,7 @@ Em **Authentication → URL Configuration**:
 
 Em **Authentication → Providers → Email**, habilite confirmação de e-mail. Mantenha a confirmação segura de mudança de endereço. O Supabase envia as confirmações de cadastro, alteração de e-mail e recuperação de senha. O serviço padrão de autenticação tem limites e pode restringir destinatários; para uso com outras pessoas configure **Custom SMTP** com um remetente autorizado. Não desative confirmações para contornar os limites.
 
-O login usa e-mail e senha. As senhas ficam no serviço de autenticação, não nas tabelas do app. A sessão permanece nesta aba (sessionStorage); fechar a aba pode exigir novo login.
+O login usa e-mail e senha. As senhas ficam no serviço de autenticação, não nas tabelas do app. Com **Lembrar de mim neste aparelho** marcado, o app persiste os tokens de sessão em localStorage e o e-mail para preencher o formulário. A senha nunca é armazenada pelo app. Ao reabrir, a sessão é validada no Supabase e os tokens são renovados se necessário, conforme a validade/revogação configurada no serviço. Sem a opção marcada, a sessão fica somente na aba (sessionStorage). Sair remove os tokens dos dois armazenamentos; o e-mail lembrado pode ser removido desmarcando a opção. Prefira marcar apenas em aparelho pessoal. Safari/iCloud pode oferecer preenchimento de senhas com Face ID conforme o aparelho; não há autenticação biométrica própria implementada.
 
 ## 3. Criar o super admin
 

@@ -29,6 +29,12 @@ Paleta baseada em #001D39, #0A4174, #49769F, #4E8EA2, #6EA2B3, #7BBDE8 e #BDD8E9
 
 Consulte [CONFIGURAR-CONTAS.md](CONFIGURAR-CONTAS.md) para ativar o backend. Sem configuração, a tela informa a pendência e permite continuar no modo local. Não existe autenticação simulada. O GitHub Pages hospeda a interface; Supabase hospeda autenticação, banco, fotos e função de envio.
 
+## Acesso rápido
+
+A opção **Lembrar de mim neste aparelho** é voluntária e começa desmarcada. Guarda tokens de acesso/renovação e o e-mail, sem guardar senha. Na próxima visita, valida a conta e recupera seus dados do Supabase. Tokens revogados exigem novo login. Sem marcar, a sessão dura apenas na aba. A renovação usa Web Locks quando disponível para coordenar abas. Sair limpa os tokens e avisa outras abas lembradas; o e-mail pode continuar preenchido, até desmarcar a opção. Armazenamento bloqueado gera uma orientação para usar o modo temporário.
+
+O formulário usa atributos de preenchimento automático compatíveis com gerenciadores de senhas. O uso de Face ID depende do Safari/iCloud e das configurações do dispositivo; não é uma passkey cadastrada pelo aplicativo.
+
 ## Finanças e relatórios
 
 Entradas (créditos) e saídas (débitos) são separadas das formas de pagamento: crédito, débito, dinheiro ou Pix/transferência. O saldo é entradas menos saídas registradas, não saldo bancário. Não há parcelamento nem fechamento de faturas.
@@ -42,6 +48,7 @@ A lista renderiza 50 lançamentos por vez, com botão para carregar mais. O carr
 ## Validação
 
 - `npm test`: cálculos, backups, PDF e função de envio (provedor simulado).
+- `tests/remember.py`: reabertura lembrada, renovação compartilhada, sessão temporária, logout entre abas e campos de preenchimento automático, com autenticação simulada.
 - `tests/navigation.py`: menu expandido/compacto, persistência, gaveta mobile, foco e Esc, abas, pizza/rosca, PDF e larguras de 320 a 1440 pixels.
 - `tests/browser.py`: interface mobile/local e fluxos cloud contra fixtures (não comprova uma integração Supabase publicada).
 - `tests/security.mjs`: schema e políticas executados em PostgreSQL embarcado/PGlite com dois usuários e um admin. Não faz parte do app nem exige dependência em produção.
