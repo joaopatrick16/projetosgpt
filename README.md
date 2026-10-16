@@ -65,3 +65,7 @@ SALDO_TEST_URL=http://127.0.0.1:8000 python3 tests/navigation.py
 ```
 
 Os testes SQL usam schemas auth/storage de suporte para avaliar RLS; não substituem a ativação e testes no Supabase real. Login, fotos, confirmação de e-mail e entrega precisam ser validados no projeto configurado. O Safari/iPhone real ainda exige validação.
+
+## Backup automático semanal
+
+A função agendada do Netlify guarda os dados de todos os usuários em um bucket privado e avisa por e-mail. Exige ativação no Supabase e variáveis privadas no Netlify: veja [BACKUP-SEMANAL.md](BACKUP-SEMANAL.md). A publicação do código não configura as credenciais nem comprova a execução do backup.
