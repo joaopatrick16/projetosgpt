@@ -1,21 +1,28 @@
-# Assistente Serimora — teste por texto
+# Assistente Serimora — interpretação local por regras
 
-No formulário de lançamento, clique em **Assistente Serimora · lançar por texto**. A IA interpreta um único movimento; nada é gravado pelo servidor de interpretação. A ficha de revisão permite alterar descrição, valor TOTAL, data, categoria, movimento, pagamento e parcelas. Só **Confirmar e salvar na minha conta** cria os lançamentos pela sessão autenticada e pelas regras RLS já existentes. O superadmin também grava apenas em sua própria conta.
+Esta versão substitui a integração com API de IA. Não precisa criar conta na OpenAI, adicionar créditos, chave, SQL ou configurar variáveis no Netlify. A frase é analisada neste aparelho; não é enviada a um serviço de IA. Não há cota de 20 interpretações: o processamento local não usa API paga. Salvar na nuvem continua exigindo conexão e login, como os lançamentos manuais.
 
-O botão **Testar exemplo sem IA** funciona sem chave, inclusive no modo local. É uma demonstração explícita da revisão, não interpretação de texto. Confirmar esse exemplo cria um lançamento real. Cancele para testar sem gravar; exclua pelo relatório caso tenha confirmado.
+No formulário de lançamento, abra **Assistente Serimora · lançar por texto**, escreva uma frase e clique em **Preparar lançamento**. Revise os campos editáveis e use **Confirmar e salvar na minha conta**. Cancelar ou fechar descarta o rascunho. O exemplo é identificado como demonstração e também só grava após confirmar.
 
-## Ativar a interpretação real
+Exemplos:
 
-1. Execute `supabase/assistant.sql` no SQL Editor. Cria uma reserva atômica de uso: até 20 solicitações por usuário por dia UTC. Tentativas que chegam à reserva contam mesmo se o provedor falhar. Usuários não têm acesso direto à tabela.
-2. No Netlify > Project configuration > Environment variables, adicione `OPENAI_API_KEY`, privada, com escopo **Functions**, contexto **Production**. Obtenha-a no projeto da API OpenAI; uma assinatura ChatGPT não substitui crédito da API. Nunca coloque a chave no código do navegador, no GitHub ou no chat.
-3. Opcional: `OPENAI_MODEL` (padrão `gpt-4.1-mini`) e `SUPABASE_URL` (padrão: URL pública já usada pelo app). O servidor usa a chave publicável do projeto para validar a sessão e aplicar a cota; não precisa da service_role.
-4. Configure orçamento/limites de uso no projeto do provedor, acompanhe os custos e republique no Netlify para aplicar as variáveis. O limite individual do app não substitui o orçamento global do provedor.
-5. Entre com uma conta e tente: “Gastei 85 reais no mercado hoje, no cartão de débito”. Confira a revisão, cancele primeiro e depois confirme um teste. Sem configuração, o app mostra a pendência; não finge uma interpretação.
+- `Gastei 85 reais no mercado hoje, no cartão de débito.`
+- `Uber 35,50 no pix ontem`
+- `Comprei geladeira por R$ 2.400,00 em 10 vezes no crédito ontem`
+- `Recebi salário de 3000 no pix em 15/10/2026`
 
-## Limites desta versão
+## O que reconhece
 
-Somente texto, um movimento por vez, até 1.500 caracteres. Não tem áudio, leitura de comprovantes, recorrência, leitura de histórico ou autonomia para excluir/alterar lançamentos. Não guarda conversa. A OpenAI recebe a frase, data local informada pelo aparelho e nomes das categorias, sem nome do usuário, e-mail ou histórico financeiro. A requisição usa `store:false`; isso não substitui os termos e a política de retenção do provedor. O app avisa para não incluir senhas ou números de cartões.
+Um movimento por vez, até 1.500 caracteres; valores numéricos com reais/R$, vírgula ou ponto decimal e milhares no padrão brasileiro; datas ISO, DD/MM/AAAA, DD/MM (ano sugerido a partir do aparelho), hoje, ontem, anteontem e amanhã. Parcelas usam números, como `em 10 vezes`, `3 parcelas` ou `12x`, até 60. O valor é o TOTAL da compra, não o valor por parcela.
 
-Campos ausentes ficam vazios para preenchimento humano. A categoria pode ser sugerida; a IA pode errar e os dados precisam ser revisados. Datas relativas usam a data do aparelho. O valor é o total da compra, dividido em centavos entre até 60 parcelas. As parcelas são variáveis e não recorrentes. Rascunhos são descartados ao fechar, editar a frase ou mudar de conta; não são backups.
+Pagamento: crédito, débito, dinheiro e Pix/transferência. Categoria: palavras-chave como mercado, uber, aluguel e farmácia, apenas se a categoria padrão correspondente existir no perfil. Receitas como salário são marcadas como entrada; frases sem indicação de receita recebem sugestão de saída, avisada na revisão. Categorias personalizadas precisam ser selecionadas manualmente quando não corresponderem às regras.
 
-A rotina de backup já preparada não ativa a IA. A interpretação real depende da configuração acima; os testes automatizados usam respostas simuladas e não geram cobranças reais.
+Sem valor, data ou pagamento reconhecido, o campo fica vazio e deve ser completado. Vários valores, datas ou pagamentos, parcelas fora do limite e referências a juros/valor por parcela exigem correção. Não entende valores por extenso, textos livres complexos, recorrência, áudio ou comprovantes. É um preenchimento por regras, não uma IA geral; confira sempre.
+
+## Gravação e remoção
+
+A interpretação não lê o histórico nem grava nada. A confirmação usa as regras existentes: somente a própria conta autenticada (inclusive para superadmin) ou o armazenamento local, conforme o modo. Parcelas são variáveis e não recorrentes. Rascunhos são descartados ao fechar, editar a frase ou mudar de conta.
+
+A função de API `netlify/functions/assistant.mjs` e o SQL de cota foram retirados do repositório. Se você chegou a criar `OPENAI_API_KEY` no Netlify apenas para esta função, pode removê-la; esta versão não a utiliza. Uma eventual tabela `assistant_usage` já criada pode permanecer, sem uso pelo aplicativo.
+
+Os testes verificam interpretação real por regras, revisão, campos obrigatórios, cancelamento, parcelas e escopo de gravação. Não há chamadas pagas à IA.

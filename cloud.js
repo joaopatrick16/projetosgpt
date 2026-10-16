@@ -84,9 +84,3 @@ export const table=(name,query='',options={})=>request(`/rest/v1/${name}${query?
 export async function allRows(name,query){const rows=[];for(let offset=0;;offset+=500){const batch=await table(name,`${query}&limit=500&offset=${offset}`);rows.push(...batch);if(batch.length<500)return rows;if(rows.length>=100000)throw Error('Volume muito grande para esta visualização. Reduza o período.');}}
 export async function uploadAvatar(blob){const path=`${currentUser().id}/avatar.jpg`;await request(`/storage/v1/object/avatars/${path}`,{method:'POST',body:blob,headers:{'Content-Type':'image/jpeg','x-upsert':'true'}});return path;}
 export const getAvatar=path=>request(`/storage/v1/object/authenticated/avatars/${path}`,{blob:true});
-
-export async function interpretExpense(text,today){
- await refresh();if(!session)throw Error('Entre na sua conta para usar a IA.');
- let response;try{response=await fetch('/.netlify/functions/assistant',{method:'POST',headers:{Authorization:`Bearer ${session.access_token}`,'Content-Type':'application/json'},body:JSON.stringify({text,today}),signal:AbortSignal.timeout(55000)});}catch{throw Error('Não foi possível conectar à IA. Nenhum lançamento foi salvo.');}
- const data=await response.json().catch(()=>({}));if(!response.ok)throw Error(data.message||'A IA está indisponível neste endereço. Use o app no Netlify.');return data.draft;
-}

@@ -79,7 +79,7 @@ async function saveOwnEntries(data){
   if(profile?.id===identity){try{await loadCloud();}catch{status('Lançamento salvo. Atualize o mês para recarregar os dados; não repita o lançamento.');}}
  }else{const existing=localEntries(),ids=new Set(existing.map(e=>e.id));const next=[...existing,...data.filter(e=>!ids.has(e.id))];localStorage.setItem(key,JSON.stringify(next));entries=next;render();}
 }
-assistant=createAssistant({context:()=>({identity:mode==='cloud'&&profile?profile.id:'local',cloud:mode==='cloud'&&Boolean(profile),today:localDate,categories:categories.filter(c=>c.active!==false).map(c=>c.name)}),interpret:cloud.interpretExpense,save:saveOwnEntries});
+assistant=createAssistant({context:()=>({identity:mode==='cloud'&&profile?profile.id:'local',cloud:mode==='cloud'&&Boolean(profile),today:localDate,categories:categories.filter(c=>c.active!==false).map(c=>c.name)}),save:saveOwnEntries});
 planning=createPlanning({context:()=>({identity:mode==='cloud'&&profile?profile.id:'local',month:$('month').value,today:localDate,categories:categories.filter(c=>c.active!==false).map(c=>c.name),entries:mode==='cloud'?entries.filter(e=>e.user_id===profile?.id):entries}),
  allEntries:async()=>mode==='cloud'?(await cloud.allRows('transactions',`select=*&user_id=eq.${profile.id}&order=id.asc`)).map(fromRow):localEntries(),
  saveEntries:saveOwnEntries,download,

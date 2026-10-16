@@ -81,4 +81,4 @@ A função agendada do Netlify guarda os dados de todos os usuários em um bucke
 
 ## Assistente Serimora por texto
 
-No formulário de lançamento, abra **Assistente Serimora · lançar por texto**. Há revisão editável e confirmação obrigatória; o exemplo **sem IA** permite testar o fluxo sem chave, e a interpretação real exige login, API OpenAI e configuração de cota no Supabase. Veja [ASSISTENTE-IA.md](ASSISTENTE-IA.md). A publicação do código não ativa a API automaticamente.
+No formulário, abra **Assistente Serimora · lançar por texto** e use **Preparar lançamento**. A interpretação ocorre no próprio navegador por regras, sem API, chave ou cobrança de IA. Há revisão editável e confirmação obrigatória; funciona nos modos local e autenticado. Veja exemplos e limites em [ASSISTENTE-IA.md](ASSISTENTE-IA.md).

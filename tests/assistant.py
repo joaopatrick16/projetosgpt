@@ -1,4 +1,4 @@
-"""Review-first assistant flow; mock AI and auth, no real API usage."""
+"""Local text interpretation and review; mocked account storage, no AI requests."""
 import json,os
 from urllib.parse import urlsplit
 from playwright.sync_api import sync_playwright,expect
@@ -7,7 +7,7 @@ CAT='44444444-4444-4444-8444-444444444444'
 with sync_playwright() as p:
  b=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox']);ctx=b.new_context(viewport={'width':390,'height':844},service_workers='block')
  ctx.route('**/config.js',lambda r:r.fulfill(content_type='application/javascript',body="export const cloudConfig={url:'https://backend.test',publishableKey:'public-key'};"))
- rows=[];requests=[]
+ rows=[]
  def backend(route):
   req=route.request;path=urlsplit(req.url).path
   if path.endswith('/token'):data={'access_token':'user-token','refresh_token':'refresh','expires_in':3600,'user':{'id':ID,'email':'admin@example.com'}}
@@ -20,11 +20,7 @@ with sync_playwright() as p:
   else:data={}
   route.fulfill(content_type='application/json',body=json.dumps(data) if data is not None else '',status=200 if data is not None else 204)
  ctx.route('https://backend.test/**',backend)
- def ai(route):
-  requests.append(route.request.post_data_json)
-  assert route.request.headers['authorization']=='Bearer user-token'
-  route.fulfill(content_type='application/json',body=json.dumps({'draft':{'description':'Mercado','cents':10000,'date':'2026-10-15','category':'Alimentação','direction':'expense','payment_method':None,'installments':3,'notes':'Informe a forma de pagamento.'}}))
- ctx.route('**/.netlify/functions/assistant',ai)
+ ctx.route('**/.netlify/functions/assistant',lambda route: (_ for _ in ()).throw(AssertionError('Não deve chamar API de IA')))
  page=ctx.new_page();errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
  page.goto(os.environ.get('SALDO_TEST_URL','http://127.0.0.1:8110'));page.locator('#email').fill('admin@example.com');page.locator('#password').fill('password123');page.locator('#auth-submit').click();expect(page.locator('#workspace')).to_be_visible();page.locator('#admin-scope').select_option('all')
  page.locator('#assistant-open').click();page.locator('#assistant-text').fill('Mercado 100 reais hoje em 3 vezes');page.locator('#assistant-interpret').click();expect(page.locator('#assistant-review')).to_be_visible();assert not rows
@@ -35,4 +31,9 @@ with sync_playwright() as p:
  page.locator('#assistant-close').click();page.locator('#assistant-open').click();expect(page.locator('#assistant-review')).to_be_hidden();page.locator('#assistant-demo').click();expect(page.locator('#assistant-source')).to_have_text('Demonstração sem IA');assert len(rows)==3
  page.evaluate("dispatchEvent(new Event('saldo:session-changed'))");expect(page.locator('#assistant-dialog')).not_to_be_visible();expect(page.locator('#auth-screen')).to_be_visible();assert len(rows)==3;assert not errors,errors
  print('PASS: revisão editável, pagamento obrigatório, cancelar não grava, parcelas por confirmação, escopo próprio do admin e limpeza na saída.')
+ ctx.close()
+ local=b.new_context(viewport={'width':390,'height':844},service_workers='block')
+ local.route('**/config.js',lambda r:r.fulfill(content_type='application/javascript',body="export const cloudConfig={url:'',publishableKey:''};"))
+ page=local.new_page();page.goto(os.environ.get('SALDO_TEST_URL','http://127.0.0.1:8110'));page.locator('#local-mode').click();page.locator('#assistant-open').click();page.locator('#assistant-text').fill('Uber 35,50 no pix ontem');page.locator('#assistant-interpret').click();expect(page.locator('#assistant-review')).to_be_visible();expect(page.locator('#ai-amount')).to_have_value('35.50');expect(page.locator('#ai-category')).to_have_value('Transporte');assert page.evaluate('localStorage.getItem("saldo.expenses.v1")') is None;page.locator('#assistant-confirm').click();expect(page.locator('#assistant-status')).to_contain_text('Lançamento salvo');assert page.evaluate('JSON.parse(localStorage.getItem("saldo.expenses.v1"))[0].cents')==3550
+ print('PASS: frase livre reconhecida e salva no modo local, sem conta ou API.')
  b.close()
