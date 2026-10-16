@@ -24,6 +24,16 @@ with sync_playwright() as p:
  assert 'Moradia' in page.locator('#category-chart').get_attribute('aria-label')
  expect(page.locator('#chart-center')).to_be_visible()
  page.screenshot(path='/tmp/saldo-dashboard-desktop.png',full_page=True)
+ expect(page.locator('#back-navigation')).to_be_hidden()
+ page.locator('.nav-item[data-view=reports]').click()
+ expect(page.locator('#back-button')).to_have_attribute('aria-label','Voltar para Dashboard')
+ page.locator('.nav-item[data-view=settings]').click()
+ expect(page.locator('#back-button')).to_have_attribute('aria-label','Voltar para Relatórios')
+ page.locator('#back-button').click();expect(page.locator('#reports')).to_be_visible()
+ page.locator('#back-button').click();expect(page.locator('#dashboard')).to_be_visible()
+ expect(page.locator('#back-navigation')).to_be_hidden()
+ page.locator('.nav-item[data-view=dashboard]').click()
+ expect(page.locator('#back-navigation')).to_be_hidden()
  original_width=page.locator('.sidebar').bounding_box()['width']
  page.locator('#menu-toggle').click()
  expect(page.locator('#menu-toggle')).to_have_attribute('aria-expanded','false')
@@ -32,8 +42,23 @@ with sync_playwright() as p:
  expect(page.locator('#reports')).to_be_visible()
  assert page.locator('#report-comparison tr').count()==6
  assert page.locator('#report-category-bars .progress-track').count()==4
+ page.locator('[data-report-view=categories][data-mode=stacked]').click()
+ expect(page.locator('#report-category-bars')).to_be_hidden()
+ assert page.locator('#report-categories-stacked .stacked-segment').count()==4
+ widths=page.locator('#report-categories-stacked .stacked-segment').evaluate_all('(els)=>els.map(el=>parseFloat(el.style.width))')
+ assert abs(sum(widths)-100)<0.001
+ assert abs(widths[0]-150000/285000*100)<0.001
+ expect(page.locator('#report-payments')).to_be_visible()
+ page.locator('[data-report-view=payments][data-mode=stacked]').click()
+ assert page.locator('#report-payments-stacked .stacked-segment').count()==2
  page.reload();page.locator('#local-mode').click()
  expect(page.locator('#menu-toggle')).to_have_attribute('aria-expanded','false')
+ page.locator('.nav-item[data-view=reports]').click()
+ expect(page.locator('[data-report-view=categories][data-mode=stacked]')).to_have_attribute('aria-pressed','true')
+ expect(page.locator('#report-payments-stacked')).to_be_visible()
+ page.locator('[data-report-view=categories][data-mode=indicators]').click()
+ expect(page.locator('#report-category-bars')).to_be_visible()
+ page.locator('#back-button').click()
  page.locator('#menu-toggle').click()
  page.locator('[data-chart=pie]').click()
  expect(page.locator('#chart-center')).to_be_hidden()
@@ -57,6 +82,8 @@ with sync_playwright() as p:
  page.locator('#mobile-menu-toggle').click()
  page.locator('.nav-item[data-view=export]').click()
  expect(page.locator('#export')).to_be_visible()
+ assert page.locator('#back-button').is_visible()
+ assert page.locator('#back-button').bounding_box()['height']>=44
  expect(page.locator('#mobile-menu-toggle')).to_have_attribute('aria-expanded','false')
  with page.expect_download() as download:page.locator('#pdf').click()
  assert download.value.suggested_filename.endswith('.pdf')

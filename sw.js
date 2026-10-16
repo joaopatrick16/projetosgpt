@@ -1,5 +1,5 @@
-const CACHE='saldo-v15';
-const FILES=['./','./index.html','./style.css?v=dynamic-motion-1','./fonts/inter-latin-variable.woff2','./app.js','./interactions.js','./navigation.js','./dashboard.js','./finance.js','./report.js','./cloud.js','./session-store.js','./config.js','./manifest.webmanifest','./icon.svg','./assets/serimora-logo.png','./icon.png'];
+const CACHE='saldo-v17';
+const FILES=['./','./index.html','./style.css?v=stacked-reports-1','./fonts/inter-latin-variable.woff2','./app.js','./interactions.js','./navigation.js','./dashboard.js','./finance.js','./report.js','./cloud.js','./session-store.js','./config.js','./manifest.webmanifest','./icon.svg','./assets/serimora-logo.png','./icon.png'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(FILES.map(path=>new Request(path,{cache:'reload'})))).then(()=>self.skipWaiting()));});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key.startsWith('saldo-')&&key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim()));});
 self.addEventListener('fetch',event=>{if(event.request.method!=='GET'||new URL(event.request.url).origin!==self.location.origin)return;event.respondWith(fetch(event.request,{cache:'no-cache'}).catch(()=>caches.match(event.request).then(cached=>cached || (event.request.mode==='navigate'?caches.match('./index.html'):Response.error()))));});
