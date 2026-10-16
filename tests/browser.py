@@ -134,8 +134,8 @@ with sync_playwright() as p:
     assert page.locator('#list .delete').count()==0
     navigate(page,'settings')
     page.locator('#category-name').fill('Viagens');page.locator('#category-form button').click()
-    page.get_by_text('Dados sincronizados',exact=True).wait_for()
     expect(page.locator('#category-manager')).to_contain_text('Viagens')
+    expect(page.locator('#app-status')).to_be_hidden()
     page.locator('#app-name').fill('Meu Saldo');page.locator('#settings-form button').click()
     page.get_by_text('Aparência salva para todos os perfis.',exact=True).wait_for()
     assert 'MEU SALDO' in page.locator('.sidebar .brand').text_content()

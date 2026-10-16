@@ -1,7 +1,7 @@
 import {cashflow,expensesForMonth,shiftMonth} from './finance.js';
 const $=id=>document.getElementById(id);
 const money=cents=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(cents/100);
-const palette=['#7bbde8','#00d7ee','#49769f','#1951fc','#6ea2b3','#bdd8e9','#3781fc','#4e8ea2'];
+const palette=['#19d3c5','#ffbd59','#a98bff','#ff718c','#3297ff','#d7ed77','#ed8be0','#f28b54'];
 const paymentNames={credit:'Cartão de crédito',debit:'Cartão de débito',cash:'Dinheiro',transfer:'Pix / transferência'};
 function el(tag,value,css){const element=document.createElement(tag);element.textContent=value;if(css)element.className=css;return element;}
 const monthName=month=>new Intl.DateTimeFormat('pt-BR',{month:'short',year:'numeric',timeZone:'UTC'}).format(new Date(month+'-01T12:00:00Z'));

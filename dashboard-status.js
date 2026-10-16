@@ -1,0 +1,6 @@
+export function createDashboardStatus(element){
+ let view='dashboard',synced=false,kind='message',timer=null,animation=null,generation=0;
+ function cancel(){generation++;clearTimeout(timer);timer=null;animation?.cancel();animation=null;}
+ function showSync(){cancel();kind='sync';element.textContent='Dados sincronizados';element.hidden=false;const current=generation;timer=setTimeout(()=>{timer=null;if(current!==generation||view!=='dashboard')return;if(matchMedia('(prefers-reduced-motion: reduce)').matches){element.hidden=true;return;}animation=element.animate([{opacity:1,transform:'translateY(0)'},{opacity:0,transform:'translateY(-4px)'}],{duration:280,easing:'ease-out'});animation.finished.then(()=>{if(current===generation){element.hidden=true;animation=null;}},()=>{});},10000);}
+ return {set(message){if(message==='Dados sincronizados'){synced=true;if(view==='dashboard')showSync();else{cancel();kind='sync';element.textContent=message;element.hidden=true;}return;}cancel();kind='message';element.textContent=message;element.hidden=!message;},navigated(next){const changed=next!==view;view=next;if(next!=='dashboard'&&kind==='sync'){cancel();element.hidden=true;}else if(next==='dashboard'&&changed&&synced)showSync();},invalidate(){synced=false;},reset(){synced=false;cancel();kind='message';element.textContent='';element.hidden=true;}};
+}
