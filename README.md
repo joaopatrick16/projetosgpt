@@ -19,7 +19,7 @@ Layout com menu lateral recolhível no computador e gaveta no celular, inspirado
 
 O dashboard combina cartões 2×2, barras mensais lado a lado e distribuição por categoria em pizza ou rosca. A preferência de visualização fica salva no aparelho. Relatórios traz comparação de seis meses, barras de participação por categoria/pagamento e lançamentos; a exportação possui um resumo antes do download. Os gráficos usam apenas saídas, incluindo compromissos recorrentes.
 
-Paleta baseada em #001D39, #0A4174, #49769F, #4E8EA2, #6EA2B3, #7BBDE8 e #BDD8E9, com degradês e botões arredondados. Efeitos curtos de onda, destaque, abertura de painel e feedback de erro ocorrem somente nas interações, via Web Animations API. Não há animações em loop. A preferência `prefers-reduced-motion` desativa os efeitos e transições. A cor personalizada pelo super admin continua disponível; o antigo azul padrão recebe a nova tonalidade.
+Paleta baseada em #001D39, #0A4174, #49769F, #4E8EA2, #6EA2B3, #7BBDE8 e #BDD8E9, com degradês e botões arredondados. Efeitos curtos de onda, destaque, abertura de painel e feedback de erro ocorrem somente nas interações, via Web Animations API. Inspirado na referência em vídeo: cartões entram em sequência, números contam até o total final, barras crescem, pizza/rosca recebem um desenho circular e o indicador do menu desliza. Dicas mostram valores por barra, categoria e fatia ao passar o cursor, tocar ou focar a legenda pelo teclado. Os contadores são só apresentação: cálculos e PDF usam os valores finais em centavos. Trocar de tela cancela os efeitos anteriores; reduzir movimentos também conclui imediatamente os números. Não há animações em loop. A preferência `prefers-reduced-motion` desativa os efeitos e transições. A cor personalizada pelo super admin continua disponível; o antigo azul padrão recebe a nova tonalidade.
 
 ## Modos
 
@@ -49,6 +49,7 @@ A lista renderiza 50 lançamentos por vez, com botão para carregar mais. O carr
 
 - `npm test`: cálculos, backups, PDF e função de envio (provedor simulado).
 - `tests/remember.py`: reabertura lembrada, renovação compartilhada, sessão temporária, logout entre abas e campos de preenchimento automático, com autenticação simulada.
+- `tests/motion.py`: transições, contadores exatos, barras e rosca, dicas dos gráficos, cancelamento, repouso e redução de movimentos.
 - `tests/navigation.py`: menu expandido/compacto, persistência, gaveta mobile, foco e Esc, abas, pizza/rosca, PDF e larguras de 320 a 1440 pixels.
 - `tests/browser.py`: interface mobile/local e fluxos cloud contra fixtures (não comprova uma integração Supabase publicada).
 - `tests/security.mjs`: schema e políticas executados em PostgreSQL embarcado/PGlite com dois usuários e um admin. Não faz parte do app nem exige dependência em produção.
