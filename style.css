@@ -197,3 +197,10 @@ iframe#nl-badge-frame{display:none!important;visibility:hidden!important;pointer
  .toolbar-controls #month::-webkit-date-and-time-value{min-width:0;text-align:center}
  .toolbar-controls #month::-webkit-datetime-edit{min-width:0;padding:0}
 }
+
+@media(min-width:1001px){
+ .dashboard-grid{align-items:stretch}
+ .dashboard-left,.dashboard-right{display:flex;flex-direction:column;min-width:0}
+ .dashboard-left>.chart-panel,.dashboard-right>.balance-panel{flex:1}
+ .dashboard-left>.panel:last-child,.dashboard-right>.panel:last-child{margin-bottom:20px}
+}
