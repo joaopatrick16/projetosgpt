@@ -31,6 +31,7 @@ with sync_playwright() as p:
  page.locator('.nav-item[data-view=dashboard]').click()
  page.wait_for_function('document.getAnimations().length===0 && !document.querySelector("[data-counting]")')
  bar=page.locator('.bar[data-tooltip]').last
+ assert bar.evaluate('(el)=>getComputedStyle(el).cursor')=='default'
  bar.hover();expect(page.locator('#interaction-tooltip')).to_be_visible()
  assert 'Variáveis' in page.locator('#interaction-tooltip').inner_text()
  page.keyboard.press('Escape');expect(page.locator('#interaction-tooltip')).to_be_hidden()
