@@ -171,3 +171,6 @@ body{background:#001d39}.app-shell{display:grid;grid-template-columns:238px minm
 .stacked-legend .category{gap:10px;flex-wrap:wrap}
 .stacked-legend .category-name{flex:1;min-width:120px}
 @media(max-width:480px){.report-switch button{font-size:11px;padding:8px 10px}.stacked-track{height:38px}}
+
+/* Keep the hosting badge from covering application controls on small screens. */
+iframe#nl-badge-frame{display:none!important;visibility:hidden!important;pointer-events:none!important}
