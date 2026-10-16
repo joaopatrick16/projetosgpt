@@ -34,3 +34,21 @@ Gastos do modo local ficam vinculados ao endereço antigo do navegador: exporte 
 ## Publicação manual alternativa
 
 Execute `npm run build` e envie a pasta `dist` no recurso de publicação manual do Netlify. O conteúdo de `dist` contém somente o app estático e sua chave Supabase publicável; não inclui funções de servidor, SQL, testes ou arquivos Git. Publicações manuais não recebem atualizações automáticas do repositório.
+
+## Atualizações consistentes e diagnóstico
+
+`npm run build` gera `dist/releases/<versão>/` com CSS, módulos e fontes da mesma versão. O HTML usa esse endereço exclusivo; imports internos continuam dentro da versão. A publicação inclui `version.json` (commit/versão/data) e um service worker com hashes SHA-256 dos arquivos do pacote. O worker verifica o pacote antes de assumir o controle e mantém a versão anterior como proteção para sessões abertas. Dados de contas, planejamento e sessão não são apagados nessa atualização.
+
+A página verifica novas publicações ao abrir, recuperar foco e periodicamente enquanto visível. Mostra **Atualizar agora / Depois**, sem recarregar formulários automaticamente. A atualização espera a confirmação de que o worker correto assumiu o controle. Quando o pacote está indisponível/incompleto, mostra falha e preserva os dados. A instalação antiga precisa ser reaberta/recarregada uma primeira vez para receber esse mecanismo.
+
+Em **Configurações → Atualizações do app**, compare **Endereço** e **Versão em uso** nos aparelhos. O endereço precisa ser `https://serimora.netlify.app` nos dois, e o identificador deve ser igual. `Desenvolvimento (arquivos de origem)` indica execução do checkout/GitHub Pages ou diretório de publicação incorreto, em vez do pacote gerado em dist.
+
+Verificação pública automatizada, em uma rede com acesso ao site:
+
+```
+npm run verify:published -- https://serimora.netlify.app/ COMMIT_ESPERADO
+```
+
+O comando confere o commit, HTML, CSS, módulos, worker e hashes dos arquivos realmente servidos, e retorna erro se houver versão incorreta ou conteúdo misturado. Não usa credenciais, não altera a publicação e não testa login/dados privados. Os testes locais `python3 tests/releases.py` simulam versões A/B, atualização de uma sessão aberta, preservação de dados, desktop/celular, modo offline e rejeição de pacote corrompido.
+
+Se a publicação ainda não corresponder ao GitHub, confira **Deploys** no Netlify: último commit publicado, status Published/Failed/Cancelled/Paused, branch de produção `main`, build `npm run build` e diretório `dist`. Uma mudança enviada ao GitHub não comprova que o deploy foi aceito. Verifique também eventual divisão de tráfego entre versões e se o endereço é o de produção, não uma prévia. Não limpe os dados do site para tentar resolver: isso pode apagar o planejamento local; exporte uma cópia antes de qualquer limpeza manual.

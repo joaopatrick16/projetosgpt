@@ -90,3 +90,7 @@ O sininho mostra contas atrasadas e dos próximos sete dias do próprio planejam
 ### Organização do planejamento
 
 A visão geral oferece acessos separados a contas, orçamentos, metas e importação. As listas têm busca, filtros e paginação de 10 itens. Cada aviso abre somente o registro correspondente e destaca o item por um breve tremor; com movimento reduzido, há apenas borda de destaque. **Ver todos os itens** retorna à lista. A organização não altera o armazenamento dos dados.
+
+## Publicação e versão em uso
+
+A publicação do Netlify usa arquivos agrupados por versão, manifesto verificável e aviso de atualização para sessões abertas. Em **Configurações → Atualizações do app**, confira endereço e identificador da versão no celular e no computador. Não é necessário apagar dados do navegador. Veja o diagnóstico e a validação pública em [PUBLICAR-NETLIFY.md](PUBLICAR-NETLIFY.md).

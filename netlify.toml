@@ -9,11 +9,13 @@
   for = "/sw.js"
   [headers.values]
     Cache-Control = "no-cache, must-revalidate"
+    Netlify-CDN-Cache-Control = "no-store"
 
 [[headers]]
   for = "/index.html"
   [headers.values]
     Cache-Control = "no-cache, must-revalidate"
+    Netlify-CDN-Cache-Control = "no-store"
 
 [functions."weekly-backup"]
   # Segunda-feira, 12:00 UTC = 09:00 em Brasília.
@@ -22,3 +24,21 @@
 [functions."due-reminders"]
   # Diariamente, 09h de Brasília.
   schedule = "0 12 * * *"
+
+# HTML/manifestos sempre revalidados; módulos e CSS pertencem a uma versão imutável.
+[[headers]]
+  for = "/"
+  [headers.values]
+    Cache-Control = "no-cache, must-revalidate"
+    Netlify-CDN-Cache-Control = "no-store"
+
+[[headers]]
+  for = "/version.json"
+  [headers.values]
+    Cache-Control = "no-store"
+    Netlify-CDN-Cache-Control = "no-store"
+
+[[headers]]
+  for = "/releases/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
