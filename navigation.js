@@ -1,5 +1,5 @@
 import {animateFeedback,animateView,cancelWithin,animateSelection} from './interactions.js';
-const names={planning:'Planejamento',dashboard:'Dashboard',reports:'Relatórios',users:'Usuários',settings:'Configurações',profile:'Meu perfil',export:'Exportar PDF'};
+const names={notifications:'Notificações',planning:'Planejamento',dashboard:'Dashboard',reports:'Relatórios',users:'Usuários',settings:'Configurações',profile:'Meu perfil',export:'Exportar PDF'};
 export function createNavigation({canAccess,onNavigate}) {
  const shell=document.getElementById('workspace'),sidebar=document.getElementById('app-sidebar'),content=document.querySelector('.app-content');
  const mobile=matchMedia('(max-width: 760px)');
