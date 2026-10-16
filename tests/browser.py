@@ -100,11 +100,12 @@ with sync_playwright() as p:
     page=context.new_page();errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
     page.goto(BASE)
     page.locator('#email').fill('alice@example.com');page.locator('#password').fill('password123');page.locator('#auth-submit').click()
-    page.get_by_text('Dados sincronizados.',exact=True).wait_for()
+    page.get_by_text('Dados sincronizados',exact=True).wait_for()
     assert 'Casa Alice' in page.locator('#list').inner_text() and 'Casa Bob' not in page.locator('#list').inner_text()
     assert page.locator('#admin-toggle').is_hidden()
     expect(page.locator('#account-label')).to_have_text('Bem-vindo, Alice')
-    assert page.locator('#account-label').evaluate('(el)=>getComputedStyle(el).fontSize')==page.get_by_role('heading',name='Visão do mês').evaluate('(el)=>getComputedStyle(el).fontSize')
+    assert page.locator('#account-label').evaluate('(el)=>parseFloat(getComputedStyle(el).fontSize)')>=19
+    assert page.get_by_role('heading',name='Visão do mês').evaluate('(el)=>parseFloat(getComputedStyle(el).fontSize)')>=26
     navigate(page,'profile')
     assert page.locator('#profile-email').input_value()=='alice@example.com'
     page.locator('#profile-name').fill('Alice Nova');page.locator('#profile-form button').click()
@@ -123,7 +124,7 @@ with sync_playwright() as p:
     assert page.locator('#workspace').is_hidden()
     assert page.locator('#welcome-avatar').get_attribute('src') is None
     page.locator('#email').fill('admin@example.com');page.locator('#password').fill('password123');page.locator('#auth-submit').click()
-    page.get_by_text('Dados sincronizados.',exact=True).wait_for();navigate(page,'users')
+    page.get_by_text('Dados sincronizados',exact=True).wait_for();navigate(page,'users')
     page.locator('#admin-scope').select_option('all')
     navigate(page,'dashboard')
     page.wait_for_function('!document.querySelector("[data-counting]")')
@@ -133,7 +134,7 @@ with sync_playwright() as p:
     assert page.locator('#list .delete').count()==0
     navigate(page,'settings')
     page.locator('#category-name').fill('Viagens');page.locator('#category-form button').click()
-    page.get_by_text('Dados sincronizados.',exact=True).wait_for()
+    page.get_by_text('Dados sincronizados',exact=True).wait_for()
     expect(page.locator('#category-manager')).to_contain_text('Viagens')
     page.locator('#app-name').fill('Meu Saldo');page.locator('#settings-form button').click()
     page.get_by_text('Aparência salva para todos os perfis.',exact=True).wait_for()

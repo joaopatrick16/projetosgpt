@@ -36,9 +36,9 @@ export function friendly(error,status) {
  const reference=typeof code==='string'&&/^[a-z0-9_]{1,60}$/i.test(code)?code:`HTTP ${status}`;
  return `Não foi possível concluir a ação (${reference}). Informe essa referência ao responsável para verificar o serviço.`;
 }
-async function request(path,{method='GET',body,authenticated=true,headers={},blob=false}={}) {
+async function request(path,{method='GET',body,authenticated=true,headers={},blob=false,expectedUser=null}={}) {
  if(!configured)throw Error('As contas ainda precisam ser conectadas ao banco de dados.');
- if(authenticated){await refresh();if(!session)throw Error('Entre na sua conta para continuar.');}
+ if(authenticated){await refresh();if(!session)throw Error('Entre na sua conta para continuar.');if(expectedUser&&session.user?.id!==expectedUser)throw Error('Sua conta mudou. Tente novamente.');}
  const requestHeaders={apikey:cloudConfig.publishableKey,...headers};
  if(authenticated)requestHeaders.Authorization=`Bearer ${session.access_token}`;
  if(body!==undefined && !(body instanceof Blob)){requestHeaders['Content-Type']='application/json';body=JSON.stringify(body);}
@@ -84,3 +84,6 @@ export const table=(name,query='',options={})=>request(`/rest/v1/${name}${query?
 export async function allRows(name,query){const rows=[];for(let offset=0;;offset+=500){const batch=await table(name,`${query}&limit=500&offset=${offset}`);rows.push(...batch);if(batch.length<500)return rows;if(rows.length>=100000)throw Error('Volume muito grande para esta visualização. Reduza o período.');}}
 export async function uploadAvatar(blob){const path=`${currentUser().id}/avatar.jpg`;await request(`/storage/v1/object/avatars/${path}`,{method:'POST',body:blob,headers:{'Content-Type':'image/jpeg','x-upsert':'true'}});return path;}
 export const getAvatar=path=>request(`/storage/v1/object/authenticated/avatars/${path}`,{blob:true});
+
+export async function checkReminderEmail(){await refresh();if(!session)throw Error('Entre na sua conta para ativar e-mail.');const response=await fetch('/.netlify/functions/reminder-config',{headers:{Authorization:`Bearer ${session.access_token}`},signal:AbortSignal.timeout(15000)});const data=await response.json().catch(()=>({}));if(!response.ok)throw Error(data.message||'Serviço de e-mail indisponível neste endereço.');}
+export const syncBillReminders=(items,expectedUser)=>table('rpc/sync_bill_reminders','',{method:'POST',body:{items},expectedUser});

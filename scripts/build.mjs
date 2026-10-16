@@ -4,7 +4,7 @@ import {resolve} from 'node:path';
 const root=fileURLToPath(new URL('../',import.meta.url));
 const output=resolve(root,'dist');
 await mkdir(output,{recursive:true});
-const files=['index.html','style.css','app.js','assistant.js','assistant-parser.js','planning.js','planning-core.js','interactions.js','navigation.js','dashboard.js','finance.js','report.js','report-logo.js','cloud.js','session-store.js','config.js','manifest.webmanifest','sw.js','icon.svg','icon.png'];
+const files=['index.html','style.css','app.js','alerts.js','alerts-core.js','assistant.js','assistant-parser.js','planning.js','planning-core.js','interactions.js','navigation.js','dashboard.js','finance.js','report.js','report-logo.js','cloud.js','session-store.js','config.js','manifest.webmanifest','sw.js','icon.svg','icon.png'];
 await Promise.all(files.map(file=>copyFile(resolve(root,file),resolve(output,file))));
 for(const directory of ['assets','fonts'])await cp(resolve(root,directory),resolve(output,directory),{recursive:true});
 console.log('App estático preparado em dist/.');

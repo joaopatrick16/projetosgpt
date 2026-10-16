@@ -1,6 +1,5 @@
 import {animateFeedback,animateView,cancelWithin,animateSelection} from './interactions.js';
 const names={planning:'Planejamento',dashboard:'Dashboard',reports:'Relatórios',users:'Usuários',settings:'Configurações',profile:'Meu perfil',export:'Exportar PDF'};
-const descriptions={planning:'Limites, vencimentos, metas e importação de extratos.',dashboard:'Uma visão completa das suas finanças.',reports:'Compare períodos e acompanhe cada lançamento.',users:'Perfis e gastos gerais, em um só lugar.',settings:'Seu aplicativo, do seu jeito.',profile:'Sua identidade e seus dados de contato.',export:'Um relatório claro para guardar e compartilhar.'};
 export function createNavigation({canAccess,onNavigate}) {
  const shell=document.getElementById('workspace'),sidebar=document.getElementById('app-sidebar'),content=document.querySelector('.app-content');
  const mobile=matchMedia('(max-width: 760px)');
@@ -19,7 +18,7 @@ export function createNavigation({canAccess,onNavigate}) {
   const previous=document.querySelector(`[data-page="${view}"]`);cancelWithin(previous);view=name;
   for(const section of document.querySelectorAll('[data-page]'))section.hidden=section.dataset.page!==name;
   for(const button of document.querySelectorAll('.nav-item[data-view]')){if(button.dataset.view===name)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');}
-  document.getElementById('page-title').textContent=names[name];document.getElementById('view-description').textContent=descriptions[name];
+  document.getElementById('page-title').textContent=names[name];
   updateBack();positionIndicator(animate);closeMenu();onNavigate?.(name);
   const section=document.querySelector(`[data-page="${name}"]`);
   if(animate)animateView(section);

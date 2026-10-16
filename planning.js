@@ -2,13 +2,13 @@ import {amountToCents,expensesForMonth} from './finance.js';
 import {parseStatement,fingerprint} from './planning-core.js';
 const $=id=>document.getElementById(id),money=c=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(c/100);
 const element=(tag,value)=>{const e=document.createElement(tag);e.textContent=value;return e;};
-export function createPlanning({context,saveEntries,allEntries,download,quickEntry}){
+export function createPlanning({context,saveEntries,allEntries,download,quickEntry,onChange=()=>{}}){
  let imported=[],revision=0,busy=false;
  const storageKey=()=>`serimora.planning.v1.${context().identity}`;
  const empty=()=>({version:1,budgets:[],bills:[],goals:[]});
  function valid(s){return s?.version===1&&['budgets','bills','goals'].every(k=>Array.isArray(s[k])&&s[k].length<=1000)&&s.budgets.every(b=>typeof b.category==='string'&&b.category.length<=80&&/^\d{4}-(0[1-9]|1[0-2])$/.test(b.month)&&Number.isSafeInteger(b.cents)&&b.cents>0)&&s.bills.every(b=>typeof b.id==='string'&&typeof b.name==='string'&&b.name.length<=80&&Number.isSafeInteger(b.cents)&&b.cents>0&&/^\d{4}-\d{2}-\d{2}$/.test(b.date)&&new Date(b.date).toISOString().slice(0,10)===b.date&&typeof b.paid==='boolean')&&s.goals.every(g=>typeof g.id==='string'&&typeof g.name==='string'&&g.name.length<=80&&Number.isSafeInteger(g.target)&&g.target>0&&Number.isSafeInteger(g.saved)&&g.saved>=0);}
  function read(){const raw=localStorage.getItem(storageKey());if(!raw)return empty();const value=JSON.parse(raw);if(!valid(value))throw Error('Planejamento inválido. Preserve uma cópia antes de limpar o navegador.');return value;}
- function write(value){localStorage.setItem(storageKey(),JSON.stringify(value));render();}
+ function write(value){localStorage.setItem(storageKey(),JSON.stringify(value));render();onChange(value);}
  const amount=id=>{const value=amountToCents($(id).value);if(!value)throw Error('Informe um valor positivo válido.');return value;};
  async function run(button,fn){if(busy)return;busy=true;button.disabled=true;const identity=context().identity;try{await fn(identity);if(context().identity===identity)$('planning-status').textContent='Alteração concluída.';}catch(e){if(context().identity===identity)$('planning-status').textContent=e.message;}finally{busy=false;button.disabled=false;}}
  function button(label,fn){const b=element('button',label);b.type='button';b.className='secondary';b.onclick=()=>run(b,fn);return b;}
@@ -27,5 +27,5 @@ export function createPlanning({context,saveEntries,allEntries,download,quickEnt
  $('statement-save').onclick=()=>run($('statement-save'),async identity=>{const rows=[...document.querySelectorAll('[data-import-index]:checked')].map(e=>imported[Number(e.dataset.importIndex)]);if(!rows.length)throw Error('Selecione pelo menos um movimento.');if(!confirm(`Importar ${rows.length} movimentos para SUA conta?`))return;await saveEntries(rows);if(context().identity!==identity)return;imported=[];revision++;$('statement-review').replaceChildren();$('statement-save').hidden=true;$('statement-file').value='';});
  $('planning-backup').onclick=()=>run($('planning-backup'),()=>download(new Blob([JSON.stringify(read(),null,2)],{type:'application/json'}),'serimora-planejamento.json'));
  $('planning-restore').onchange=()=>{const file=$('planning-restore').files[0];if(file)run($('planning-restore'),async identity=>{try{if(file.size>2*1024*1024)throw Error('Arquivo grande demais.');const data=JSON.parse(await file.text());if(!valid(data))throw Error('Planejamento inválido.');if(context().identity===identity&&confirm('Substituir seu planejamento neste navegador pelo arquivo?'))write(data);}finally{$('planning-restore').value='';}});};
- return {render};
+ return {render,snapshot:read};
 }

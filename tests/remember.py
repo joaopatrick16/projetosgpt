@@ -36,14 +36,14 @@ with sync_playwright() as p:
  page.locator('#email').fill(EMAIL);page.locator('#password').fill('fixture-long-password')
  page.locator('#remember-user').check();page.locator('#auth-submit').click()
  expect(page.locator('#workspace')).to_be_visible()
- page.get_by_text('Dados sincronizados.',exact=True).wait_for()
+ page.get_by_text('Dados sincronizados',exact=True).wait_for()
  assert not page.evaluate('JSON.stringify(localStorage)').__contains__('fixture-long-password')
  # Browser restarts restore localStorage, but do not restore sessionStorage.
  restarted=browser.new_context(storage_state=context.storage_state(),service_workers='block')
  restarted.route('**/config.js',lambda r:r.fulfill(content_type='application/javascript',body="export const cloudConfig={url:'https://fixture.supabase.co',publishableKey:'sb_publishable_fixture'};"))
  restarted.route('https://fixture.supabase.co/**',mock)
  restart_page=restarted.new_page();restart_page.goto(BASE);expect(restart_page.locator('#workspace')).to_be_visible();restarted.close()
- reopened=new_page();expect(reopened.locator('#workspace')).to_be_visible();reopened.get_by_text('Dados sincronizados.',exact=True).wait_for()
+ reopened=new_page();expect(reopened.locator('#workspace')).to_be_visible();reopened.get_by_text('Dados sincronizados',exact=True).wait_for()
  assert reopened.locator('#email').input_value()==EMAIL
  # Concurrent tabs coordinate refresh with Web Locks.
  page.evaluate('''()=>{const key=Object.keys(localStorage).find(k=>k.startsWith('saldo.session.v1:')&&!k.endsWith(':remembered-user'));const s=JSON.parse(localStorage.getItem(key));s.expires_at=0;localStorage.setItem(key,JSON.stringify(s));}''')

@@ -75,10 +75,14 @@ A função agendada do Netlify guarda os dados de todos os usuários em um bucke
 - Aba **Planejamento**: limite mensal por categoria (usa somente os lançamentos do próprio perfil), contas a vencer com registro de pagamento, metas com valor reservado manual e revisão de extratos CSV/OFX.
 - No lançamento, o valor informado é o **total da compra**. As parcelas dividem os centavos sem perdas e ajustam o dia no fim do mês. Cada parcela é um lançamento independente; a exclusão remove somente a parcela escolhida. Não se combina parcelamento com recorrência.
 - O botão **+ Lançar** leva ao formulário e posiciona o cursor na descrição.
-- O planejamento desta versão é local e separado pelo ID da conta; não sincroniza nem entra no backup semanal do banco. Há exportação/restauração própria na aba. Limpar os dados do navegador apaga esse planejamento sem uma cópia. Não há lembretes por e-mail para vencimentos nesta versão.
+- O planejamento desta versão é local e separado pelo ID da conta; não sincroniza nem entra no backup semanal do banco. Há exportação/restauração própria na aba. Limpar os dados do navegador apaga esse planejamento sem uma cópia. Lembretes por e-mail são opcionais e exigem a configuração descrita em ALERTAS.md.
 - Importação: até 500 linhas, arquivo de até 2 MB. CSV com cabeçalho `data;descrição;valor`, data ISO ou DD/MM/AAAA, valores negativos para saídas e positivos para entradas. Aceita OFX com blocos STMTTRN. Movimentos começam na categoria Outros e Pix/transferência. Data, descrição normalizada, valor e direção identificam possíveis duplicatas, que começam desmarcadas e podem ser selecionadas após revisão. A detecção é por similaridade exata desses campos, não uma conciliação bancária. Arquivos incompatíveis são rejeitados antes de gravar; não se conecta ao banco.
 - Teste de fluxo: `SALDO_TEST_URL=http://127.0.0.1:8110 python3 tests/planning.py`. Não cria contas nem envia e-mails reais.
 
 ## Assistente Serimora por texto
 
 No formulário, abra **Assistente Serimora** e use **Preparar lançamento**. A interpretação ocorre no próprio navegador por regras, sem API, chave ou cobrança de IA. Há revisão editável e confirmação obrigatória; funciona nos modos local e autenticado. Veja exemplos e limites em [ASSISTENTE-IA.md](ASSISTENTE-IA.md).
+
+## Alertas de vencimento e atalhos
+
+O sininho mostra contas atrasadas e dos próximos sete dias do próprio planejamento. O bloco **Seu próximo passo** prioriza vencimentos, limites de orçamento e metas. Há atalhos diretos para Lançamentos e Assistente Serimora. Avisos com permissão do navegador funcionam com o app aberto; o arquivo de calendário permite configurar lembretes no celular. E-mail automático tem rotina diária preparada, mas depende de ativação no servidor. Veja [ALERTAS.md](ALERTAS.md).

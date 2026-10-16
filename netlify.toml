@@ -18,3 +18,7 @@
 [functions."weekly-backup"]
   # Segunda-feira, 12:00 UTC = 09:00 em Brasília.
   schedule = "0 12 * * 1"
+
+[functions."due-reminders"]
+  # Diariamente, 09h de Brasília.
+  schedule = "0 12 * * *"
