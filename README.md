@@ -69,3 +69,12 @@ Os testes SQL usam schemas auth/storage de suporte para avaliar RLS; não substi
 ## Backup automático semanal
 
 A função agendada do Netlify guarda os dados de todos os usuários em um bucket privado e avisa por e-mail. Exige ativação no Supabase e variáveis privadas no Netlify: veja [BACKUP-SEMANAL.md](BACKUP-SEMANAL.md). A publicação do código não configura as credenciais nem comprova a execução do backup.
+
+## Recursos de planejamento em teste
+
+- Aba **Planejamento**: limite mensal por categoria (usa somente os lançamentos do próprio perfil), contas a vencer com registro de pagamento, metas com valor reservado manual e revisão de extratos CSV/OFX.
+- No lançamento, o valor informado é o **total da compra**. As parcelas dividem os centavos sem perdas e ajustam o dia no fim do mês. Cada parcela é um lançamento independente; a exclusão remove somente a parcela escolhida. Não se combina parcelamento com recorrência.
+- O botão **+ Lançar** leva ao formulário e posiciona o cursor na descrição.
+- O planejamento desta versão é local e separado pelo ID da conta; não sincroniza nem entra no backup semanal do banco. Há exportação/restauração própria na aba. Limpar os dados do navegador apaga esse planejamento sem uma cópia. Não há lembretes por e-mail para vencimentos nesta versão.
+- Importação: até 500 linhas, arquivo de até 2 MB. CSV com cabeçalho `data;descrição;valor`, data ISO ou DD/MM/AAAA, valores negativos para saídas e positivos para entradas. Aceita OFX com blocos STMTTRN. Movimentos começam na categoria Outros e Pix/transferência. Data, descrição normalizada, valor e direção identificam possíveis duplicatas, que começam desmarcadas e podem ser selecionadas após revisão. A detecção é por similaridade exata desses campos, não uma conciliação bancária. Arquivos incompatíveis são rejeitados antes de gravar; não se conecta ao banco.
+- Teste de fluxo: `SALDO_TEST_URL=http://127.0.0.1:8110 python3 tests/planning.py`. Não cria contas nem envia e-mails reais.

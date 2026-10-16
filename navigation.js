@@ -1,6 +1,6 @@
 import {animateFeedback,animateView,cancelWithin,animateSelection} from './interactions.js';
-const names={dashboard:'Dashboard',reports:'Relatórios',users:'Usuários',settings:'Configurações',profile:'Meu perfil',export:'Exportar PDF'};
-const descriptions={dashboard:'Uma visão completa das suas finanças.',reports:'Compare períodos e acompanhe cada lançamento.',users:'Perfis e gastos gerais, em um só lugar.',settings:'Seu aplicativo, do seu jeito.',profile:'Sua identidade e seus dados de contato.',export:'Um relatório claro para guardar e compartilhar.'};
+const names={planning:'Planejamento',dashboard:'Dashboard',reports:'Relatórios',users:'Usuários',settings:'Configurações',profile:'Meu perfil',export:'Exportar PDF'};
+const descriptions={planning:'Limites, vencimentos, metas e importação de extratos.',dashboard:'Uma visão completa das suas finanças.',reports:'Compare períodos e acompanhe cada lançamento.',users:'Perfis e gastos gerais, em um só lugar.',settings:'Seu aplicativo, do seu jeito.',profile:'Sua identidade e seus dados de contato.',export:'Um relatório claro para guardar e compartilhar.'};
 export function createNavigation({canAccess,onNavigate}) {
  const shell=document.getElementById('workspace'),sidebar=document.getElementById('app-sidebar'),content=document.querySelector('.app-content');
  const mobile=matchMedia('(max-width: 760px)');
