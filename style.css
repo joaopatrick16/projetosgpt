@@ -188,3 +188,12 @@ iframe#nl-badge-frame{display:none!important;visibility:hidden!important;pointer
 .alerts-bell{position:relative}#alerts-count{position:absolute;right:-4px;top:-5px;min-width:18px;height:18px;line-height:18px;padding:0 3px;border-radius:12px;background:#7bbde8;color:#001d39;font-size:10px;font-weight:700}.sidebar-note>small{display:block;font-size:9px;letter-spacing:1px;color:#7bbde8;margin-bottom:12px}.sidebar-note button{font-size:11px;padding:8px 10px;min-height:36px;width:100%;white-space:normal}.sidebar-note strong{overflow-wrap:anywhere}#alerts-dialog .planning-item{margin-top:8px;padding:12px 0}#alerts-dialog .planning-item p{margin-bottom:0}@media(max-width:480px){.topbar-actions{gap:5px}.topbar-actions .icon-button{width:34px;height:34px;min-height:34px;padding:7px}.profile-shortcut .account-summary{gap:6px}}
 
 .topbar h1{font-size:36px;letter-spacing:-1.2px}.section-title{font-size:27px}.profile-shortcut .account-summary h2{font-size:21px;line-height:1.25}.profile-shortcut .welcome-avatar{width:58px;height:58px;flex-shrink:0}.profile-shortcut .account-summary{gap:10px}.page-heading{min-width:0}.topbar-actions{flex-shrink:1}.profile-shortcut .account-summary h2{overflow-wrap:anywhere}@media(min-width:761px) and (max-width:1100px){.topbar{flex-wrap:wrap;align-items:center}.topbar-actions{margin-left:auto}.profile-shortcut .account-summary h2{font-size:20px}}@media(max-width:760px){.topbar h1{font-size:30px}.section-title{font-size:26px}.profile-shortcut .account-summary h2{font-size:19px}.profile-shortcut .welcome-avatar{width:48px;height:48px}}
+
+/* Bound the native iOS month control to the same mobile content margins. */
+@media(max-width:760px){
+ .toolbar-controls{min-width:0;max-width:100%}
+ .toolbar-controls>label{min-width:0;flex:1 1 0}
+ .toolbar-controls #month{display:block;box-sizing:border-box;width:100%;min-width:0;max-width:100%;min-inline-size:0;max-inline-size:100%;margin-inline:0;-webkit-appearance:none;appearance:none}
+ .toolbar-controls #month::-webkit-date-and-time-value{min-width:0;text-align:center}
+ .toolbar-controls #month::-webkit-datetime-edit{min-width:0;padding:0}
+}
