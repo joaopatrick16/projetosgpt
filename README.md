@@ -86,3 +86,7 @@ No formulário, abra **Assistente Serimora** e use **Preparar lançamento**. A i
 ## Alertas de vencimento e atalhos
 
 O sininho mostra contas atrasadas e dos próximos sete dias do próprio planejamento. O bloco **Seu próximo passo** prioriza vencimentos, limites de orçamento e metas. Há atalhos diretos para Lançamentos e Assistente Serimora. Avisos com permissão do navegador funcionam com o app aberto; o arquivo de calendário permite configurar lembretes no celular. E-mail automático tem rotina diária preparada, mas depende de ativação no servidor. Veja [ALERTAS.md](ALERTAS.md).
+
+### Organização do planejamento
+
+A visão geral oferece acessos separados a contas, orçamentos, metas e importação. As listas têm busca, filtros e paginação de 10 itens. Cada aviso abre somente o registro correspondente e destaca o item por um breve tremor; com movimento reduzido, há apenas borda de destaque. **Ver todos os itens** retorna à lista. A organização não altera o armazenamento dos dados.
