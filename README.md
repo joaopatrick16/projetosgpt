@@ -78,3 +78,7 @@ A função agendada do Netlify guarda os dados de todos os usuários em um bucke
 - O planejamento desta versão é local e separado pelo ID da conta; não sincroniza nem entra no backup semanal do banco. Há exportação/restauração própria na aba. Limpar os dados do navegador apaga esse planejamento sem uma cópia. Não há lembretes por e-mail para vencimentos nesta versão.
 - Importação: até 500 linhas, arquivo de até 2 MB. CSV com cabeçalho `data;descrição;valor`, data ISO ou DD/MM/AAAA, valores negativos para saídas e positivos para entradas. Aceita OFX com blocos STMTTRN. Movimentos começam na categoria Outros e Pix/transferência. Data, descrição normalizada, valor e direção identificam possíveis duplicatas, que começam desmarcadas e podem ser selecionadas após revisão. A detecção é por similaridade exata desses campos, não uma conciliação bancária. Arquivos incompatíveis são rejeitados antes de gravar; não se conecta ao banco.
 - Teste de fluxo: `SALDO_TEST_URL=http://127.0.0.1:8110 python3 tests/planning.py`. Não cria contas nem envia e-mails reais.
+
+## Assistente Serimora por texto
+
+No formulário de lançamento, abra **Assistente Serimora · lançar por texto**. Há revisão editável e confirmação obrigatória; o exemplo **sem IA** permite testar o fluxo sem chave, e a interpretação real exige login, API OpenAI e configuração de cota no Supabase. Veja [ASSISTENTE-IA.md](ASSISTENTE-IA.md). A publicação do código não ativa a API automaticamente.
